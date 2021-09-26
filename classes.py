@@ -90,6 +90,8 @@ class Transaction:
     def __init__(self, date_in, basket_in):
         self._date = date_in
         self._basket = basket_in
+        self._promotional_code
+        self._payment_method
 
     @property
     def date(self):
@@ -106,6 +108,28 @@ class Transaction:
     @basket.setter
     def basket(self, new_basket):
         self._basket = new_basket
+
+    @property
+    def promotional_code(self):
+        return self._promotional_code
+
+    @promotional_code.setter
+    def promotional_code(self, new_promotional_code):
+        self._promotional_code = new_promotional_code
+
+    @property
+    def payment_method(self):
+        return self._payment_method
+
+    @payment_method.setter
+    def payment_method(self, new_payment_method):
+        self._payment_method = new_payment_method
+
+    def calculate_total(self):
+        pass
+
+    def is_promotional_code_valid(self):
+        return True
 
 class Basket:
     def __init__(self):
