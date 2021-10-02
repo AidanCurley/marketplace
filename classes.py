@@ -1,9 +1,12 @@
 import re
 from datetime import date
 
+CARD_REGEX = re.compile(r'[\d]{16}')
+CVV_REGEX = re.compile(r'[\d]{3}')
 EMAIL_REGEX = re.compile(r'[\w]*@[\w]*\.[\w]*')
 USER_TYPES = ['PERSON', 'ORGANISATION']
 PAYMENT_TYPES = ['CARD', 'ONLINE']
+CARD_TYPES = ['VISA', 'MASTERCARD']
 
 class Customer:
     def __init__(self):
@@ -96,7 +99,7 @@ class User(Customer):
 
     @type.setter
     def type(self, new_type):
-        if new_type not in USER_TYPES:
+        if new_type.upper() not in USER_TYPES:
             raise ValueError('Not a valid user type')
         else:
             self._type = new_type
@@ -244,12 +247,61 @@ class PaymentDetails:
 
     @default.setter
     def default(self, new_default):
-        if new_default not in PAYMENT_TYPES:
+        if new_default.upper() not in PAYMENT_TYPES:
             raise ValueError('Not a valid payment type')
         else:
             self._default = new_default
 
+class Card:
+    def __init__(self):
+        self._card_number = None
+        self._card_type = None
+        self._expiry_date = None
+        self._cvv_number = None
 
+    @property
+    def card_number(self):
+        return self._card_number
+
+    @card_number.setter
+    def card_number(self, new_card_number):
+        if re.fullmatch(CARD_REGEX, new_card_number) == None:
+            raise ValueError('Card number must be 16 digits long')
+        else:
+            self._card_number = new_card_number
+
+    @property
+    def card_type(self):
+        return self._card_type
+
+    @card_type.setter
+    def card_type(self, new_card_type):
+        if new_card_type.upper() not in CARD_TYPES:
+            raise ValueError('Card type is invalid')
+        else:
+            self._card_type = new_card_type
+
+    @property
+    def expiry_date(self):
+        return self._expiry_date
+
+    @expiry_date.setter
+    def expiry_date(self, new_expiry_date):
+        if new_expiry_date < date.today():
+            raise ValueError('This card is expired')
+        else:
+            self._expiry_date = new_expiry_date
+
+    @property
+    def cvv_number(self):
+        return self._cvv_number
+
+    @cvv_number.setter
+    def cvv_number(self, new_cvv_number):
+        if re.fullmatch(CVV_REGEX, new_cvv_number) == None:
+            raise ValueError('The CVV number must contain three digits')
+        else:
+            self._cvv_number = new_cvv_number
 
 #  Small test just to check properties of user
 user = User()
@@ -260,3 +312,9 @@ user.email = 'red@hotmail.com'
 print(user.email)
 user.type = 'PERSON'
 print(user.type)
+
+# Checking fields on card class
+card = Card()
+card.card_number='1234567890123456'
+print(card.cvv_number)
+print(card.expiry_date)
