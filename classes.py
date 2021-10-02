@@ -303,6 +303,8 @@ class Card:
         else:
             self._cvv_number = new_cvv_number
 
+    def is_valid(self, card):
+        return card.card_number == self.card_number and card.card_type == self.card_type and card.expiry_date == self.expiry_date and card.cvv_number == self.cvv_number
 
 class OnlinePaymentService:
     def __init__(self):
@@ -324,6 +326,9 @@ class OnlinePaymentService:
     @service_number.setter
     def service_number(self, new_service_number):
         self._service_number = new_service_number
+
+    def is_valid(self, service):
+        return service.service_name == self.service_name and service.service_number == self.service_number
 
 class GiftVoucher:
     def __init__(self):
@@ -358,6 +363,32 @@ class GiftVoucher:
     def amount(self, new_amount):
         self._amount = new_amount
 
+    def is_valid(self, voucher):
+        return voucher.voucher_id == self.voucher_id and voucher.expiry_date == self.expiry_date
+
+class PaymentError(Exception):
+    pass
+
+class PaymentMethod(Card, OnlinePaymentService, GiftVoucher):
+    def __init__(self):
+        self._amount = None
+
+    @property
+    def amount(self):
+        return self._amount
+
+    @amount.setter
+    def amount(self, new_amount):
+        self._amount = new_amount
+
+    def process_payment(self, payment):
+        if self.amount >= payment:
+            self.amount -= payment
+            return True
+        else:
+            raise PaymentError('Your payment method cannot cover the cost of this transaction')
+
+
 #  Small test just to check properties of user
 user = User()
 user.username = 'red1809'
@@ -369,7 +400,20 @@ user.type = 'PERSON'
 print(user.type)
 
 # Checking fields on card class
-card = Card()
+card = PaymentMethod()
 card.card_number='1234567890123456'
-print(card.cvv_number)
-print(card.expiry_date)
+card.amount = 500
+print(card.process_payment(200))
+
+online = PaymentMethod()
+online.service_name = "Paypal"
+online.service_number = 234
+
+new_card = Card()
+new_card.card_number='1234567890123452'
+print(card.is_valid(new_card))
+
+new_online = OnlinePaymentService()
+new_online.service_name = "Paypal"
+new_online.service_number = 234
+print(new_online.is_valid(online))
