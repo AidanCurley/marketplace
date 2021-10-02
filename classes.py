@@ -38,6 +38,7 @@ class User(Customer):
         self._email = None
         self._phone = None
         self._type = None
+        super().__init__()
 
     @property
     def name(self):
@@ -417,3 +418,10 @@ new_online = OnlinePaymentService()
 new_online.service_name = "Paypal"
 new_online.service_number = 234
 print(new_online.is_valid(online))
+
+print("=============")
+john = User()
+print(john.basket.products)
+john.basket.add_product("Bananas")
+john.basket.add_product("Beer")
+print(john.basket.products)
