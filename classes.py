@@ -151,6 +151,30 @@ class StoreFront:
     def logo(self, new_logo):
         self._logo = new_logo
 
+class Product:
+    def __init__(self, new_name = None, num_items = None):
+        self._name = new_name
+        self._stock_count = num_items
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, new_name):
+        self._name = new_name
+
+    @property
+    def stock_count(self):
+        return self._stock_count
+
+    @stock_count.setter
+    def stock_count(self, new_stock_count):
+        self._stock_count = new_stock_count
+
+    def is_available(self):
+        return self.stock_count > 0
+
 class Catalogue:
     def __init__(self):
         self._products = {}
@@ -503,7 +527,13 @@ john.basket.add_product("Bananas")
 john.basket.add_product("Beer")
 print(john.basket.products)
 
+
+banana = Product()
+banana.name = 'Banana'
+banana.stock_count = 10
+print(banana.is_available())
+
 cat = Catalogue()
-cat.add_product_to_catalogue('Banana', 50)
+cat.add_product_to_catalogue(banana, 50)
 print(cat.products)
-cat.remove_product_from_catalogue('Banana')
+
