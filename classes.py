@@ -151,6 +151,37 @@ class StoreFront:
     def logo(self, new_logo):
         self._logo = new_logo
 
+class Catalogue:
+    def __init__(self):
+        self._products = {}
+
+    @property
+    def products(self):
+        return self._products
+
+    @products.setter
+    def products(self, new_products):
+        self._products = new_products
+
+    def add_product_to_catalogue(self, new_product, new_price):
+        if new_product in self.products.keys():
+            print("Already exists")
+        else:
+            self.products[new_product] = new_price
+
+    def remove_product_from_catalogue(self, unwanted_product):
+        if unwanted_product not in self.products.keys():
+            print("Not in catalogue")
+        else:
+            del self.products[unwanted_product]
+            print('Deleted')
+
+    def update_price(self, product, new_price):
+        if product not in self.products.keys():
+            print("Not in catalogue")
+        else:
+            self.products[product] = new_price
+
 class Basket:
     def __init__(self):
         self._products = []
@@ -471,3 +502,8 @@ print(john.basket.products)
 john.basket.add_product("Bananas")
 john.basket.add_product("Beer")
 print(john.basket.products)
+
+cat = Catalogue()
+cat.add_product_to_catalogue('Banana', 50)
+print(cat.products)
+cat.remove_product_from_catalogue('Banana')
