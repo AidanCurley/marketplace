@@ -303,6 +303,61 @@ class Card:
         else:
             self._cvv_number = new_cvv_number
 
+
+class OnlinePaymentService:
+    def __init__(self):
+        self._service_name = None
+        self._service_number = None
+
+    @property
+    def service_name(self):
+        return self._service_name
+
+    @service_name.setter
+    def service_name(self, new_service_name):
+        self._service_name = new_service_name
+
+    @property
+    def service_number(self):
+        return self._service_number
+
+    @service_number.setter
+    def service_number(self, new_service_number):
+        self._service_number = new_service_number
+
+class GiftVoucher:
+    def __init__(self):
+        self._voucher_id = None
+        self._expiry_date = None
+        self._amount = None
+
+    @property
+    def voucher_id(self):
+        return self._voucher_id
+
+    @voucher_id.setter
+    def voucher_id(self, new_voucher_id):
+        self._voucher_id = new_voucher_id
+
+    @property
+    def expiry_date(self):
+        return self._expiry_date
+
+    @expiry_date.setter
+    def expiry_date(self, new_expiry_date):
+        if new_expiry_date < date.today():
+            raise ValueError('This gift voucher has expired')
+        else:
+            self._expiry_date = new_expiry_date
+
+    @property
+    def amount(self):
+        return self._amount
+
+    @amount.setter
+    def amount(self, new_amount):
+        self._amount = new_amount
+
 #  Small test just to check properties of user
 user = User()
 user.username = 'red1809'
