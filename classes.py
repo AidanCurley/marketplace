@@ -206,6 +206,41 @@ class Catalogue:
         else:
             self.products[product] = new_price
 
+class Warehouse:
+    def __init__(self):
+        self._products = {}
+
+    @property
+    def products(self):
+        return self._products
+
+    @products.setter
+    def products(self, new_products):
+        self._products = new_products
+
+    def add_product_to_warehouse(self, new_product, new_location):
+        if new_product in self.products.keys():
+            print("Already exists")
+        else:
+            self.products[new_product] = new_location
+
+    def remove_product_from_warehouse(self, unwanted_product):
+        if unwanted_product not in self.products.keys():
+            print("Not in warehouse")
+        else:
+            del self.products[unwanted_product]
+            print('Deleted')
+
+    def update_location(self, product, new_location):
+        self.products[product] = new_location
+
+    def find_product(self, product):
+        if product not in self.products.keys():
+            print("Not in warehouse")
+        else:
+            return self.products[product]
+
+
 class Basket:
     def __init__(self):
         self._products = []
@@ -537,3 +572,6 @@ cat = Catalogue()
 cat.add_product_to_catalogue(banana, 50)
 print(cat.products)
 
+cat = Warehouse()
+cat.add_product_to_warehouse(banana, '50ZQ')
+print(cat.find_product(banana))
