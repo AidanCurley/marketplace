@@ -29,7 +29,41 @@ class Customer:
     def payment_details(self, new_payment_details):
         self._name = new_payment_details
 
-class User(Customer):
+class Seller:
+    def __init__(self):
+        self._catalogue = Catalogue()
+        self._delivery_type = 'FIRST CLASS'
+
+    @property
+    def catalogue(self):
+        return self._catalogue
+
+    @catalogue.setter
+    def catalogue(self, new_catalogue):
+        self._name = new_catalogue
+
+    @property
+    def delivery_type(self):
+        return self._delivery_type
+
+    @delivery_type.setter
+    def delivery_type(self, new_delivery_type):
+        self._name = new_delivery_type
+
+class External(Seller):
+    def __init__(self):
+        self._storefront = StoreFront()
+        super().__init__()
+
+    @property
+    def storefront(self):
+        return self._storefront
+
+    @storefront.setter
+    def storefront(self, new_storefront):
+        self._name = new_storefront
+
+class User(Customer, External):
     def __init__(self):
         self._name = None
         self._address = None
@@ -104,6 +138,18 @@ class User(Customer):
             raise ValueError('Not a valid user type')
         else:
             self._type = new_type
+
+class StoreFront:
+    def __init__(self):
+        self._logo = None
+
+    @property
+    def logo(self):
+        return self._logo
+
+    @logo.setter
+    def logo(self, new_logo):
+        self._logo = new_logo
 
 class Basket:
     def __init__(self):
