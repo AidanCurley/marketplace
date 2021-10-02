@@ -2,14 +2,54 @@ import re
 from datetime import date
 
 EMAIL_REGEX = re.compile(r'[\w]*@[\w]*\.[\w]*')
+TYPES = ['PERSON', 'ORGANISATION']
 
-
-class User:
+class Customer:
     def __init__(self):
-        self._username
-        self._password
-        self._email
-        self._phone
+        self._basket = Basket()
+        self._payment_details = None
+
+    @property
+    def basket(self):
+        return self._basket
+
+    @basket.setter
+    def basket(self, new_basket):
+        self._name = new_basket
+
+    @property
+    def payment_details(self):
+        return self._payment_details
+
+    @payment_details.setter
+    def payment_details(self, new_payment_details):
+        self._name = new_payment_details
+
+class User(Customer):
+    def __init__(self):
+        self._name = None
+        self._address = None
+        self._username = None
+        self._password = None
+        self._email = None
+        self._phone = None
+        self._type = None
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, new_name):
+        self._name = new_name
+
+    @property
+    def address(self):
+        return self._address
+
+    @address.setter
+    def address(self, new_address):
+        self._address = new_address
 
     @property
     def username(self):
@@ -41,57 +81,55 @@ class User:
         else:
             self._email = new_email
 
+    @property
+    def phone(self):
+        return self._phone
 
-class Person(User):
-    def __init__(self, new_name, new_address):
-        self._name = new_name
-        self._address = new_address
+    @phone.setter
+    def phone(self, new_phone):
+        self._phone = new_phone
 
     @property
-    def name(self):
-        return self._name
+    def type(self):
+        return self._type
 
-    @name.setter
-    def name(self, new_name):
-        self._name = new_name
+    @type.setter
+    def type(self, new_type):
+        if new_type not in TYPES:
+            raise ValueError('Not a valid user type')
+        else:
+            self._type = new_type
 
-    @property
-    def address(self):
-        return self._address
-
-    @address.setter
-    def address(self, new_address):
-        self._address = new_address
-
-
-class Organisation(User):
-    def __init__(self, new_name, new_address):
-        self._name = new_name
-        self._address = new_address
+class Basket:
+    def __init__(self):
+        self._products = []
 
     @property
-    def name(self):
-        return self._name
+    def products(self):
+        return self._products
 
-    @name.setter
-    def name(self, new_name):
-        self._name = new_name
+    @products.setter
+    def products(self, new_products):
+        self._products = new_products
 
-    @property
-    def address(self):
-        return self._address
+    def add_product(self, new_product):
+        self._products.append(new_product)
 
-    @address.setter
-    def address(self, new_address):
-        self._address = new_address
+    def remove_product(self, product):
+        self._products.remove(product)
 
+    def empty_basket(self):
+        self._products = []
+
+    def checkout(self):
+        return Transaction(date.today(), self)
 
 class Transaction:
     def __init__(self, date_in, basket_in):
         self._date = date_in
         self._basket = basket_in
-        self._promotional_code
-        self._payment_method
+        self._promotional_code = None
+        self._payment_method = None
 
     @property
     def date(self):
@@ -131,43 +169,51 @@ class Transaction:
     def is_promotional_code_valid(self):
         return True
 
-class Basket:
-    def __init__(self):
-        self._products = []
+class Order:
+    def __init__(self, new_transaction):
+        self._transaction = new_transaction
+        self._fulfilled = False
+        self._fulfilled_by = None
+        self._shipped = False
+
 
     @property
-    def products(self):
-        return self._products
+    def transaction(self):
+        return self._transaction
 
-    @products.setter
-    def products(self, new_products):
-        self._products = new_products
-
-    def add_product(self, new_product):
-        self._products.append(new_product)
-
-    def remove_product(self, product):
-        self._products.remove(product)
-
-    def empty_basket(self):
-        self._products = []
-
-    def checkout(self):
-        return Transaction(date.today(), self)
-
-
-class Customer(Person):
-    def __init__(self):
-        self._basket = Basket()
-        self._payment_details
+    @transaction.setter
+    def transaction(self, new_transaction):
+        self._transaction = new_transaction
 
     @property
-    def basket(self):
-        return self._basket
+    def fulfilled(self):
+        return self._fulfilled
 
-    @basket.setter
-    def basket(self, new_basket):
-        self._name = new_basket
+    @fulfilled.setter
+    def fulfilled(self, new_fulfilled):
+        self._fulfilled = new_fulfilled
+
+    @property
+    def fulfilled_by(self):
+        return self._fulfilled_by
+
+    @fulfilled_by.setter
+    def fulfilled_by(self, new_fulfilled_by):
+        self._fulfilled_by = new_fulfilled_by
+
+    @property
+    def shipped(self):
+        return self._shipped
+
+    @shipped.setter
+    def shipped(self, new_shipped):
+        self._shipped = new_shipped
+
+    def fulfill_order(self):
+        pass
+
+    def notify_customer(self):
+        return True
 
 
 
@@ -177,14 +223,11 @@ class Customer(Person):
 
 
 
-
-
-
-person = Person('Aidan', 'Leeds')
-print(person.name)
-print(person.address)
-person.username = 'red1809'
-person.password = '123456'
-print(person.password)
-person.email = 'red@hotmail.com'
-print(person.email)
+user = User()
+user.username = 'red1809'
+user.password = '123456'
+print(user.password)
+user.email = 'red@hotmail.com'
+print(user.email)
+user.type = 'PERSON'
+print(user.type)
