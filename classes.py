@@ -2,7 +2,8 @@ import re
 from datetime import date
 
 EMAIL_REGEX = re.compile(r'[\w]*@[\w]*\.[\w]*')
-TYPES = ['PERSON', 'ORGANISATION']
+USER_TYPES = ['PERSON', 'ORGANISATION']
+PAYMENT_TYPES = ['CARD', 'ONLINE']
 
 class Customer:
     def __init__(self):
@@ -95,7 +96,7 @@ class User(Customer):
 
     @type.setter
     def type(self, new_type):
-        if new_type not in TYPES:
+        if new_type not in USER_TYPES:
             raise ValueError('Not a valid user type')
         else:
             self._type = new_type
@@ -215,14 +216,42 @@ class Order:
     def notify_customer(self):
         return True
 
+class PaymentDetails:
+    def __init__(self):
+        self._card = None
+        self._online_payment = None
+        self._default = None
+
+    @property
+    def card(self):
+        return self._card
+
+    @card.setter
+    def card(self, new_card):
+        self._card = new_card
+
+    @property
+    def online_payment(self):
+        return self._online_payment
+
+    @online_payment.setter
+    def online_payment(self, new_online_payment):
+        self._online_payment = new_online_payment
+
+    @property
+    def default(self):
+        return self._default
+
+    @default.setter
+    def default(self, new_default):
+        if new_default not in PAYMENT_TYPES:
+            raise ValueError('Not a valid payment type')
+        else:
+            self._default = new_default
 
 
 
-
-
-
-
-
+#  Small test just to check properties of user
 user = User()
 user.username = 'red1809'
 user.password = '123456'
