@@ -1,5 +1,5 @@
 import unittest
-from classes import Basket, Catalogue, Customer, External, PaymentDetails, StoreFront
+from classes import Basket, Catalogue, Customer, External, PaymentDetails, Product, StoreFront
 
 class CustomerTests(unittest.TestCase):
     def test_basket_attribute_is_Basket_instance_expect_true(self):
@@ -112,6 +112,46 @@ class ExternalSellerTests(unittest.TestCase):
         except:
             self.fail('Setting storefront attribute raised an error unexpectedly')
         self.assertEqual(seller1.storefront, test_storefront)
+
+class BasketTests(unittest.TestCase):
+    def test_products_attribute_is_a_list(self):
+        basket1 = Basket()
+        self.assertTrue(isinstance(basket1.products, list))
+
+    def test_set_products_attribute_to_string_expect_TypeError(self):
+        basket1 = Basket()
+        test_products = 'products'
+        try:
+            basket1.products = test_products
+        except TypeError as e:
+            self.assertEqual(type(e), TypeError)
+            self.assertEqual('The products attribute must be a list of Products', str(e))
+        else:
+            self.fail('TypeError not raised')
+
+    def test_set_products_attribute_to_list_of_Products_expect_no_error(self):
+        basket1 = Basket()
+        product1 = Product()
+        product2 = Product()
+        test_products = [product1, product2]
+        try:
+            basket1.products = test_products
+        except:
+            self.fail('Setting storefront attribute raised an error unexpectedly')
+        self.assertEqual(basket1.products, test_products)
+
+    def test_set_products_attribute_to_list_of_strings_expect_TypeError(self):
+        basket1 = Basket()
+        product1 = 'product1'
+        product2 = 'product2'
+        test_products = [product1, product2]
+        try:
+            basket1.products = test_products
+        except TypeError as e:
+            self.assertEqual(type(e), TypeError)
+            self.assertEqual('The products attribute must be a list of Products', str(e))
+        else:
+            self.fail('TypeError not raised')
 
 if __name__ == '__main__':
   unittest.main()
