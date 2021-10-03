@@ -30,6 +30,37 @@ class Customer:
     def payment_details(self, new_payment_details):
         self._name = new_payment_details
 
+class Catalogue:
+    def __init__(self):
+        self._products = {}
+
+    @property
+    def products(self):
+        return self._products
+
+    @products.setter
+    def products(self, new_products):
+        self._products = new_products
+
+    def add_product_to_catalogue(self, new_product, new_price):
+        if new_product in self.products.keys():
+            print("Already exists")
+        else:
+            self.products[new_product] = new_price
+
+    def remove_product_from_catalogue(self, unwanted_product):
+        if unwanted_product not in self.products.keys():
+            print("Not in catalogue")
+        else:
+            del self.products[unwanted_product]
+            print('Deleted')
+
+    def update_price(self, product, new_price):
+        if product not in self.products.keys():
+            print("Not in catalogue")
+        else:
+            self.products[product] = new_price
+
 class Seller:
     def __init__(self):
         self._catalogue = Catalogue()
@@ -41,7 +72,10 @@ class Seller:
 
     @catalogue.setter
     def catalogue(self, new_catalogue):
-        self._name = new_catalogue
+        if isinstance(new_catalogue, Catalogue) == False:
+            raise TypeError('The catalogue must be an instance of the Catalogue class')
+        else:
+            self._catalogue = new_catalogue
 
     @property
     def delivery_type(self):
@@ -65,7 +99,10 @@ class External(Seller):
 
     @storefront.setter
     def storefront(self, new_storefront):
-        self._name = new_storefront
+        if isinstance(new_storefront, StoreFront) == False:
+            raise TypeError('The storefront must be an instance of the StoreFront class')
+        else:
+            self._storefront = new_storefront
 
 class User(Customer, External):
     def __init__(self):
@@ -178,37 +215,6 @@ class Product:
 
     def is_available(self):
         return self.stock_count > 0
-
-class Catalogue:
-    def __init__(self):
-        self._products = {}
-
-    @property
-    def products(self):
-        return self._products
-
-    @products.setter
-    def products(self, new_products):
-        self._products = new_products
-
-    def add_product_to_catalogue(self, new_product, new_price):
-        if new_product in self.products.keys():
-            print("Already exists")
-        else:
-            self.products[new_product] = new_price
-
-    def remove_product_from_catalogue(self, unwanted_product):
-        if unwanted_product not in self.products.keys():
-            print("Not in catalogue")
-        else:
-            del self.products[unwanted_product]
-            print('Deleted')
-
-    def update_price(self, product, new_price):
-        if product not in self.products.keys():
-            print("Not in catalogue")
-        else:
-            self.products[product] = new_price
 
 class Warehouse:
     def __init__(self):
