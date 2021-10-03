@@ -275,10 +275,16 @@ class Basket:
         self._products = new_products
 
     def add_product(self, new_product):
-        self._products.append(new_product)
+        if isinstance(new_product, Product) == False:
+            raise TypeError('You can only add objects of the type Product')
+        else:
+            self._products.append(new_product)
 
     def remove_product(self, product):
-        self._products.remove(product)
+        try:
+            self._products.remove(product)
+        except ValueError:
+            raise ValueError('The basket does not contain this product')
 
     def empty_basket(self):
         self._products = []
@@ -575,14 +581,6 @@ new_online = OnlinePaymentService()
 new_online.service_name = "Paypal"
 new_online.service_number = 234
 print(new_online.is_valid(online))
-
-print("=============")
-john = User()
-print(john.basket.products)
-john.basket.add_product("Bananas")
-john.basket.add_product("Beer")
-print(john.basket.products)
-
 
 banana = Product()
 banana.name = 'Banana'

@@ -237,7 +237,61 @@ class BasketTests(unittest.TestCase):
         basket1.add_product(test_product2)
         #Assert
         self.assertEqual(len(basket1.products), num_products_pre_test + 1)
-        self.assertTrue(test_product1 in basket1.products)
+        self.assertTrue(test_product2 in basket1.products)
+
+    def test_remove_product_expect_basket_to_contain_one_less_product(self):
+        #Arrange
+        basket1 = Basket()
+        test_product1 = Product()
+        test_product2 = Product()
+        basket1.products = [test_product1, test_product2]
+        num_products_pre_test = len(basket1.products)
+        #Act
+        basket1.remove_product(test_product2)
+        #Assert
+        self.assertEqual(len(basket1.products), num_products_pre_test - 1)
+        self.assertTrue(test_product2  not in basket1.products)
+
+    def test_remove_product_not_in_basket_expect_ValueError(self):
+        #Arrange
+        basket1 = Basket()
+        test_product1 = Product()
+        test_product2 = Product()
+        basket1.products = [test_product1]
+        #Act
+        try:
+            basket1.remove_product(test_product2)
+        #Assert
+        except ValueError as e:
+            self.assertEqual(type(e), ValueError)
+            self.assertEqual('The basket does not contain this product', str(e))
+        else:
+            self.fail('ValueError not raised')
+
+    def test_remove_product_from_empty_basket_expect_ValueError(self):
+        #Arrange
+        basket1 = Basket()
+        test_product1 = Product()
+        #Act
+        try:
+            basket1.remove_product(test_product1)
+        #Assert
+        except ValueError as e:
+            self.assertEqual(type(e), ValueError)
+            self.assertEqual('The basket does not contain this product', str(e))
+        else:
+            self.fail('ValueError not raised')
+
+    def test_empty_basket_expect_basket_to_contain_no_products(self):
+        #Arrange
+        basket1 = Basket()
+        test_product1 = Product()
+        test_product2 = Product()
+        basket1.products = [test_product1, test_product2]
+        #Act
+        basket1.empty_basket()
+        #Assert
+        self.assertEqual(len(basket1.products), 0)
 
 if __name__ == '__main__':
   unittest.main()
