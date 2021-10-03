@@ -267,6 +267,11 @@ class Basket:
 
     @products.setter
     def products(self, new_products):
+        if isinstance(new_products, list) == False:
+            raise TypeError('The products attribute must be a list of Products')
+        for product in new_products:
+            if isinstance(product, Product) == False:
+                raise TypeError('The products attribute must be a list of Products')
         self._products = new_products
 
     def add_product(self, new_product):
