@@ -7,11 +7,12 @@ EMAIL_REGEX = re.compile(r'[\w]*@[\w]*\.[\w]*')
 USER_TYPES = ['PERSON', 'ORGANISATION']
 PAYMENT_TYPES = ['CARD', 'ONLINE']
 CARD_TYPES = ['VISA', 'MASTERCARD']
+DELIVERY_TYPES = ['FIRST CLASS', 'SECOND CLASS', 'COURIER']
 
 class Customer:
     def __init__(self):
         self._basket = Basket()
-        self._payment_details = None
+        self._payment_details = PaymentDetails()
 
     @property
     def basket(self):
@@ -48,7 +49,10 @@ class Seller:
 
     @delivery_type.setter
     def delivery_type(self, new_delivery_type):
-        self._name = new_delivery_type
+        if new_delivery_type not in DELIVERY_TYPES:
+            raise ValueError('Not a valid delivery type')
+        else:
+            self._name = new_delivery_type
 
 class External(Seller):
     def __init__(self):
