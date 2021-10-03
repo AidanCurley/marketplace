@@ -6,9 +6,49 @@ class CustomerTests(unittest.TestCase):
         cust1 = Customer()
         self.assertTrue(isinstance(cust1.basket, Basket))
 
+    def test_set_basket_attribute_to_string_expect_TypeError(self):
+        cust1 = Customer()
+        test_basket = 'basket'
+        try:
+            cust1.basket = test_basket
+        except TypeError as e:
+            self.assertEqual(type(e), TypeError)
+            self.assertEqual('The basket must be an instance of the Basket class', str(e))
+        else:
+            self.fail('TypeError not raised')
+
+    def test_set_basket_attribute_to_Basket_expect_no_error(self):
+        cust1 = Customer()
+        test_basket = Basket()
+        try:
+            cust1.basket = test_basket
+        except:
+            self.fail('Setting basket attribute raised an error unexpectedly')
+        self.assertEqual(cust1.basket, test_basket)
+
     def test_payment_details_attribute_is_Payment_Details_instance_expect_true(self):
         cust1 = Customer()
         self.assertTrue(isinstance(cust1.payment_details, PaymentDetails))
+
+    def test_set_payment_details_attribute_to_string_expect_TypeError(self):
+        cust1 = Customer()
+        test_payment_details = 'payment details'
+        try:
+            cust1.payment_details = test_payment_details
+        except TypeError as e:
+            self.assertEqual(type(e), TypeError)
+            self.assertEqual('The payment_details must be an instance of the PaymentDetails class', str(e))
+        else:
+            self.fail('TypeError not raised')
+
+    def test_set_payment_details_attribute_to_payment_details_expect_no_error(self):
+        cust1 = Customer()
+        test_payment_details = PaymentDetails()
+        try:
+            cust1.payment_details = test_payment_details
+        except:
+            self.fail('Setting payment_details attribute raised an error unexpectedly')
+        self.assertEqual(cust1.payment_details, test_payment_details)
 
 class ExternalSellerTests(unittest.TestCase):
     def test_catalogue_attribute_is_Catalogue_instance_expect_true(self):

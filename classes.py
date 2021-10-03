@@ -20,7 +20,10 @@ class Customer:
 
     @basket.setter
     def basket(self, new_basket):
-        self._name = new_basket
+        if isinstance(new_basket, Basket) == False:
+            raise TypeError('The basket must be an instance of the Basket class')
+        else:
+            self._basket = new_basket
 
     @property
     def payment_details(self):
@@ -28,7 +31,10 @@ class Customer:
 
     @payment_details.setter
     def payment_details(self, new_payment_details):
-        self._name = new_payment_details
+        if isinstance(new_payment_details, PaymentDetails) == False:
+            raise TypeError('The payment_details must be an instance of the PaymentDetails class')
+        else:
+          self._payment_details = new_payment_details
 
 class Catalogue:
     def __init__(self):
