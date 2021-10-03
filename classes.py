@@ -7,11 +7,12 @@ EMAIL_REGEX = re.compile(r'[\w]*@[\w]*\.[\w]*')
 USER_TYPES = ['PERSON', 'ORGANISATION']
 PAYMENT_TYPES = ['CARD', 'ONLINE']
 CARD_TYPES = ['VISA', 'MASTERCARD']
+DELIVERY_TYPES = ['FIRST CLASS', 'SECOND CLASS', 'COURIER']
 
 class Customer:
     def __init__(self):
         self._basket = Basket()
-        self._payment_details = None
+        self._payment_details = PaymentDetails()
 
     @property
     def basket(self):
@@ -19,7 +20,10 @@ class Customer:
 
     @basket.setter
     def basket(self, new_basket):
-        self._name = new_basket
+        if isinstance(new_basket, Basket) == False:
+            raise TypeError('The basket must be an instance of the Basket class')
+        else:
+            self._basket = new_basket
 
     @property
     def payment_details(self):
@@ -27,9 +31,86 @@ class Customer:
 
     @payment_details.setter
     def payment_details(self, new_payment_details):
-        self._name = new_payment_details
+        if isinstance(new_payment_details, PaymentDetails) == False:
+            raise TypeError('The payment_details must be an instance of the PaymentDetails class')
+        else:
+          self._payment_details = new_payment_details
 
-class User(Customer):
+class Catalogue:
+    def __init__(self):
+        self._products = {}
+
+    @property
+    def products(self):
+        return self._products
+
+    @products.setter
+    def products(self, new_products):
+        self._products = new_products
+
+    def add_product_to_catalogue(self, new_product, new_price):
+        if new_product in self.products.keys():
+            print("Already exists")
+        else:
+            self.products[new_product] = new_price
+
+    def remove_product_from_catalogue(self, unwanted_product):
+        if unwanted_product not in self.products.keys():
+            print("Not in catalogue")
+        else:
+            del self.products[unwanted_product]
+            print('Deleted')
+
+    def update_price(self, product, new_price):
+        if product not in self.products.keys():
+            print("Not in catalogue")
+        else:
+            self.products[product] = new_price
+
+class Seller:
+    def __init__(self):
+        self._catalogue = Catalogue()
+        self._delivery_type = 'FIRST CLASS'
+
+    @property
+    def catalogue(self):
+        return self._catalogue
+
+    @catalogue.setter
+    def catalogue(self, new_catalogue):
+        if isinstance(new_catalogue, Catalogue) == False:
+            raise TypeError('The catalogue must be an instance of the Catalogue class')
+        else:
+            self._catalogue = new_catalogue
+
+    @property
+    def delivery_type(self):
+        return self._delivery_type
+
+    @delivery_type.setter
+    def delivery_type(self, new_delivery_type):
+        if new_delivery_type not in DELIVERY_TYPES:
+            raise ValueError('Not a valid delivery type')
+        else:
+            self._name = new_delivery_type
+
+class External(Seller):
+    def __init__(self):
+        self._storefront = StoreFront()
+        super().__init__()
+
+    @property
+    def storefront(self):
+        return self._storefront
+
+    @storefront.setter
+    def storefront(self, new_storefront):
+        if isinstance(new_storefront, StoreFront) == False:
+            raise TypeError('The storefront must be an instance of the StoreFront class')
+        else:
+            self._storefront = new_storefront
+
+class User(Customer, External):
     def __init__(self):
         self._name = None
         self._address = None
@@ -38,6 +119,7 @@ class User(Customer):
         self._email = None
         self._phone = None
         self._type = None
+        super().__init__()
 
     @property
     def name(self):
@@ -104,6 +186,77 @@ class User(Customer):
         else:
             self._type = new_type
 
+class StoreFront:
+    def __init__(self):
+        self._logo = None
+
+    @property
+    def logo(self):
+        return self._logo
+
+    @logo.setter
+    def logo(self, new_logo):
+        self._logo = new_logo
+
+class Product:
+    def __init__(self, new_name = None, num_items = None):
+        self._name = new_name
+        self._stock_count = num_items
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, new_name):
+        self._name = new_name
+
+    @property
+    def stock_count(self):
+        return self._stock_count
+
+    @stock_count.setter
+    def stock_count(self, new_stock_count):
+        self._stock_count = new_stock_count
+
+    def is_available(self):
+        return self.stock_count > 0
+
+class Warehouse:
+    def __init__(self):
+        self._products = {}
+
+    @property
+    def products(self):
+        return self._products
+
+    @products.setter
+    def products(self, new_products):
+        self._products = new_products
+
+    def add_product_to_warehouse(self, new_product, new_location):
+        if new_product in self.products.keys():
+            print("Already exists")
+        else:
+            self.products[new_product] = new_location
+
+    def remove_product_from_warehouse(self, unwanted_product):
+        if unwanted_product not in self.products.keys():
+            print("Not in warehouse")
+        else:
+            del self.products[unwanted_product]
+            print('Deleted')
+
+    def update_location(self, product, new_location):
+        self.products[product] = new_location
+
+    def find_product(self, product):
+        if product not in self.products.keys():
+            print("Not in warehouse")
+        else:
+            return self.products[product]
+
+
 class Basket:
     def __init__(self):
         self._products = []
@@ -114,13 +267,24 @@ class Basket:
 
     @products.setter
     def products(self, new_products):
+        if isinstance(new_products, list) == False:
+            raise TypeError('The products attribute must be a list of Products')
+        for product in new_products:
+            if isinstance(product, Product) == False:
+                raise TypeError('The products attribute must be a list of Products')
         self._products = new_products
 
     def add_product(self, new_product):
-        self._products.append(new_product)
+        if isinstance(new_product, Product) == False:
+            raise TypeError('You can only add objects of the type Product')
+        else:
+            self._products.append(new_product)
 
     def remove_product(self, product):
-        self._products.remove(product)
+        try:
+            self._products.remove(product)
+        except ValueError:
+            raise ValueError('The basket does not contain this product')
 
     def empty_basket(self):
         self._products = []
@@ -417,3 +581,16 @@ new_online = OnlinePaymentService()
 new_online.service_name = "Paypal"
 new_online.service_number = 234
 print(new_online.is_valid(online))
+
+banana = Product()
+banana.name = 'Banana'
+banana.stock_count = 10
+print(banana.is_available())
+
+cat = Catalogue()
+cat.add_product_to_catalogue(banana, 50)
+print(cat.products)
+
+cat = Warehouse()
+cat.add_product_to_warehouse(banana, '50ZQ')
+print(cat.find_product(banana))
