@@ -1,0 +1,33 @@
+<html>
+  {% extends "layout.html" %}
+  
+  {% block title %}
+    {%  if title %}
+      <title>{{ title }} Page</title>
+    {% else %}
+      <title>Welcome to the Page</title>
+    {%  endif %}
+  {% endblock %}
+  
+  {% block content %}
+    <h1>Products</h1>
+      <table class="table">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col">Product</th>
+            <th scope="col">Price</th>
+            <th scope="col">Stock</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for product in products %}
+            <tr>
+              <td>{{product[0]}}</td>
+              <td>{{product[1]}}</td>
+              <td>{{product[2]}}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+  {% endblock %}
+</html>
