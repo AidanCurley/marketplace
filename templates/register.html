@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Register
+{% endblock %}
+
+{% block main %}
+    <p>Register for a new account or <a href='/login'>login</a> if you have an account already</p><br>
+    <form action="/register" method="post">
+        <div class="form-group">
+            <label>Username</label>
+            <input id='username' autocomplete="off" autofocus class="form-control" name="username" placeholder="Username" type="text">
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input id='pass' class="form-control" name="password" placeholder="Password" type="password">
+        </div>
+        <div class="form-group">
+            <input id='confirm-pass' class="form-control" name="confirm-password" placeholder="Confirm Password" type="password">
+        </div>
+        <div class="form-group">
+            <label>Forename</label>
+            <input id='f_name' class="form-control" name="f_name" type="text">
+        </div>
+        <div class="form-group">
+            <label>Surname</label>
+            <input id='surname' class="form-control" name="surname" type="password">
+        </div>
+        <div class="form-group">
+            <label>Address</label>
+            <input id='address' class="form-control" name="address" type="text">
+        </div>
+        <div class="form-group">
+            <label>Email</label>
+            <input id='email' class="form-control" name="email" type="text">
+        </div>
+        <div class="form-group">
+            <label>Mobile</label>
+            <input id='mobile' class="form-control" name="mobile" type="text">
+        </div>
+        <button id='submit' class="btn btn-primary" type="submit">Register</button>
+    </form>
+{% endblock %}
