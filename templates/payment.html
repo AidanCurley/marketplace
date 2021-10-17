@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Payment Details
+{% endblock %}
+
+{% block content %}
+    <form action="/payment" method="post">
+        <p>TOTAL: {{ total }}</p>
+        <div class="form-group">
+            <label>Card Number</label>
+            <input id='card_number' class="form-control" name="card_number" type="text" placeholder={{ card.card_number }}>
+        </div>
+        <div class="form-group">
+            <label>Sort Code</label>
+            <input id='sort_code' class="form-control" name="sort_code" type="text" placeholder={{ card.sort_code }}>
+        </div>
+        <div class="form-group">
+            <label>CVV</label>
+            <input id='cvv' class="form-control" name="cvv" type="password">
+        </div>
+        <button class="btn btn-primary" type="submit" name='submit' value="pay">Pay Now</button>
+        <button id='cancel' class="btn" type="submit" name='submit' value="cancel">Cancel</button>
+    </form>
+{% endblock %}
