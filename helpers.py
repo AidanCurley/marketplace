@@ -5,6 +5,14 @@ import urllib.parse
 from flask import redirect, render_template, request, session
 from functools import wraps
 
+
+def query_database(mysql, query_string):
+    cursor = mysql.connection.cursor()
+    cursor.execute(query_string)
+    results = cursor.fetchall()
+    cursor.close()
+    return results
+  
 def apology(message, code=400):
     """Render message as an apology to user."""
     def escape(s):
