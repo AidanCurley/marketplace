@@ -36,6 +36,7 @@ class Customer:
         else:
           self._payment_details = new_payment_details
 
+          
 class Catalogue:
     def __init__(self):
         self._products = {}
@@ -67,6 +68,7 @@ class Catalogue:
         else:
             self.products[product] = new_price
 
+            
 class Seller:
     def __init__(self):
         self._catalogue = Catalogue()
@@ -94,6 +96,7 @@ class Seller:
         else:
             self._name = new_delivery_type
 
+            
 class External(Seller):
     def __init__(self):
         self._storefront = StoreFront()
@@ -110,17 +113,27 @@ class External(Seller):
         else:
             self._storefront = new_storefront
 
+            
 class User(Customer, External):
-    def __init__(self):
-        self._name = None
+    def __init__(self, idIn = None, usernameIn = None, passwordIn = None, nameIn = None):
+        self._id = idIn
+        self._username = usernameIn
+        self._password = passwordIn
+        self._name = nameIn
         self._address = None
-        self._username = None
-        self._password = None
         self._email = None
         self._phone = None
         self._type = None
         super().__init__()
 
+    @property
+    def id(self):
+        return self._id
+
+    @id.setter
+    def id(self, new_id):
+        self._id = new_id
+        
     @property
     def name(self):
         return self._name
@@ -186,6 +199,7 @@ class User(Customer, External):
         else:
             self._type = new_type
 
+            
 class StoreFront:
     def __init__(self):
         self._logo = None
@@ -198,11 +212,22 @@ class StoreFront:
     def logo(self, new_logo):
         self._logo = new_logo
 
+        
 class Product:
-    def __init__(self, new_name = None, num_items = None):
-        self._name = new_name
-        self._stock_count = num_items
+    def __init__(self, attributes):
+        self.id = attributes[0]
+        self._name = attributes[1]
+        self._price = attributes[2]
+        self._stock_count = attributes[3]
 
+    @property
+    def id(self):
+        return self._id
+
+    @id.setter
+    def id(self, new_id):
+        self._id = new_id
+    
     @property
     def name(self):
         return self._name
@@ -211,6 +236,14 @@ class Product:
     def name(self, new_name):
         self._name = new_name
 
+    @property
+    def price(self):
+        return self._price
+
+    @price.setter
+    def price(self, new_price):
+        self._price = new_price
+        
     @property
     def stock_count(self):
         return self._stock_count
@@ -221,7 +254,11 @@ class Product:
 
     def is_available(self):
         return self.stock_count > 0
+      
+    def __str__(self):
+        return f'{self.name}'
 
+      
 class Warehouse:
     def __init__(self):
         self._products = {}
@@ -285,13 +322,20 @@ class Basket:
             self._products.remove(product)
         except ValueError:
             raise ValueError('The basket does not contain this product')
-
+            
     def empty_basket(self):
         self._products = []
-
+        
+    def calculate_total(self):
+        return sum(product.price for product in self.products)
+      
     def checkout(self):
         return Transaction(date.today(), self)
+      
+    def __str__(self):
+        return f'Basket contains {[str(product) for product in self.products]}'
 
+      
 class Transaction:
     def __init__(self, date_in, basket_in):
         self._date = date_in
@@ -331,12 +375,10 @@ class Transaction:
     def payment_method(self, new_payment_method):
         self._payment_method = new_payment_method
 
-    def calculate_total(self):
-        pass
-
     def is_promotional_code_valid(self):
         return True
 
+      
 class Order:
     def __init__(self, new_transaction):
         self._transaction = new_transaction
@@ -383,6 +425,7 @@ class Order:
     def notify_customer(self):
         return True
 
+      
 class PaymentDetails:
     def __init__(self):
         self._card = None
@@ -416,12 +459,14 @@ class PaymentDetails:
         else:
             self._default = new_default
 
+            
 class Card:
-    def __init__(self):
-        self._card_number = None
-        self._card_type = None
-        self._expiry_date = None
-        self._cvv_number = None
+    def __init__(self, card_numberIn, sort_codeIn, card_typeIn, expiry_dateIn, cvv_numberIn):
+        self._card_number = card_numberIn
+        self._sort_code = sort_codeIn
+        self._card_type = card_typeIn
+        self._expiry_date = expiry_dateIn
+        self._cvv_number = cvv_numberIn
 
     @property
     def card_number(self):
@@ -434,6 +479,14 @@ class Card:
         else:
             self._card_number = new_card_number
 
+    @property
+    def sort_code(self):
+        return self._sort_code
+
+    @sort_code.setter
+    def card_type(self, new_sort_code):
+        self._sort_code = new_sort_code
+            
     @property
     def card_type(self):
         return self._card_type
@@ -470,6 +523,7 @@ class Card:
     def is_valid(self, card):
         return card.card_number == self.card_number and card.card_type == self.card_type and card.expiry_date == self.expiry_date and card.cvv_number == self.cvv_number
 
+      
 class OnlinePaymentService:
     def __init__(self):
         self._service_name = None
@@ -493,6 +547,7 @@ class OnlinePaymentService:
 
     def is_valid(self, service):
         return service.service_name == self.service_name and service.service_number == self.service_number
+
 
 class GiftVoucher:
     def __init__(self):
@@ -530,9 +585,11 @@ class GiftVoucher:
     def is_valid(self, voucher):
         return voucher.voucher_id == self.voucher_id and voucher.expiry_date == self.expiry_date
 
+      
 class PaymentError(Exception):
     pass
 
+  
 class PaymentMethod(Card, OnlinePaymentService, GiftVoucher):
     def __init__(self):
         self._amount = None
@@ -551,46 +608,3 @@ class PaymentMethod(Card, OnlinePaymentService, GiftVoucher):
             return True
         else:
             raise PaymentError('Your payment method cannot cover the cost of this transaction')
-
-
-#  Small test just to check properties of user
-user = User()
-user.username = 'red1809'
-user.password = '123456'
-print(user.password)
-user.email = 'red@hotmail.com'
-print(user.email)
-user.type = 'PERSON'
-print(user.type)
-
-# Checking fields on card class
-card = PaymentMethod()
-card.card_number='1234567890123456'
-card.amount = 500
-print(card.process_payment(200))
-
-online = PaymentMethod()
-online.service_name = "Paypal"
-online.service_number = 234
-
-new_card = Card()
-new_card.card_number='1234567890123452'
-print(card.is_valid(new_card))
-
-new_online = OnlinePaymentService()
-new_online.service_name = "Paypal"
-new_online.service_number = 234
-print(new_online.is_valid(online))
-
-banana = Product()
-banana.name = 'Banana'
-banana.stock_count = 10
-print(banana.is_available())
-
-cat = Catalogue()
-cat.add_product_to_catalogue(banana, 50)
-print(cat.products)
-
-cat = Warehouse()
-cat.add_product_to_warehouse(banana, '50ZQ')
-print(cat.find_product(banana))
