@@ -3,14 +3,14 @@
   
   {% block title %}
     {%  if title %}
-      <title>{{ title }} Page</title>
+      <title>{{ title }}</title>
     {% else %}
       <title>Welcome to the Page</title>
     {%  endif %}
   {% endblock %}
   
   {% block content %}
-    <h1>Products</h1>
+    <h1>My Basket</h1>
       <table class="table">
         <thead class="thead-light">
           <tr>
@@ -22,12 +22,22 @@
         <tbody>
           {% for product in products %}
             <tr>
-              <td>{{product[0]}}</td>
-              <td>{{product[1]}}</td>
-              <td>{{product[2]}}</td>
+              <td>{{product.name}}</td>
+              <td></td>
+              <td>{{product.price}}</td>
             </tr>
           {% endfor %}
+          <tr>
+              <td>TOTAL</td>
+              <td></td>
+              <td>{{ total }}</td>
+          </tr>
         </tbody>
+
       </table>
+      <form method ="post" action="/checkout">
+        <button class="btn" type='submit_btn' name='submit' value='shop'>Buy more</button>
+        <button class="btn btn-primary" type='submit_btn' name='submit' value='pay'>Pay now</button>
+      </form>
   {% endblock %}
 </html>
