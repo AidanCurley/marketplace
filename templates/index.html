@@ -12,6 +12,7 @@
   {% block content %}
   {% if session.user_id %}
     <h1>Products</h1>
+    <form method ="post" action="/">
       <table class="table">
         <thead class="thead-light">
           <tr>
@@ -23,14 +24,14 @@
         <tbody>
           {% for product in products %}
             <tr>
-              <td>{{product[0]}}</td>
-              <td>{{product[1]}}</td>
-              <td>{{product[2]}}</td>
+              <td>{{ product.name }}</td>
+              <td>{{ product.price }}</td>
+              <td><button class="btn btn-primary" type='submit_btn' name='submit' value={{ product.id }}>Buy it </button></td>
             </tr>
           {% endfor %}
         </tbody>
       </table>
+    </form>
   {% endif %}
   {% endblock %}
 </html>
-
