@@ -1,18 +1,15 @@
+"""Contains hthe main classes used in the application"""
 import re
-from datetime import date
+from datetime import date, datetime
+from errors import *
+from constants import *
 
-CARD_REGEX = re.compile(r'[\d]{16}')
-CVV_REGEX = re.compile(r'[\d]{3}')
-EMAIL_REGEX = re.compile(r'[\w]*@[\w]*\.[\w]*')
-USER_TYPES = ['PERSON', 'ORGANISATION']
-PAYMENT_TYPES = ['CARD', 'ONLINE']
-CARD_TYPES = ['VISA', 'MASTERCARD']
-DELIVERY_TYPES = ['FIRST CLASS', 'SECOND CLASS', 'COURIER']
 
 class Customer:
     def __init__(self):
         self._basket = Basket()
         self._payment_details = PaymentDetails()
+        super().__init__()
 
     @property
     def basket(self):
@@ -36,10 +33,10 @@ class Customer:
         else:
           self._payment_details = new_payment_details
 
-          
+
 class Catalogue:
     def __init__(self):
-        self._products = {}
+        self._products = []
 
     @property
     def products(self):
@@ -49,30 +46,25 @@ class Catalogue:
     def products(self, new_products):
         self._products = new_products
 
-    def add_product_to_catalogue(self, new_product, new_price):
-        if new_product in self.products.keys():
-            print("Already exists")
+    def add_product(self, new_product):
+        if new_product in self.products:
+            raise ValueError("Already exists in catalogue")
         else:
-            self.products[new_product] = new_price
+            self.products.append(new_product)
 
-    def remove_product_from_catalogue(self, unwanted_product):
-        if unwanted_product not in self.products.keys():
-            print("Not in catalogue")
+    def remove_product(self, unwanted_product):
+        if unwanted_product not in self.products:
+            raise ValueError("Product not found in catalogue")
         else:
-            del self.products[unwanted_product]
-            print('Deleted')
+            self.products.remove[unwanted_product]
 
-    def update_price(self, product, new_price):
-        if product not in self.products.keys():
-            print("Not in catalogue")
-        else:
-            self.products[product] = new_price
 
-            
-class Seller:
+class External:
     def __init__(self):
         self._catalogue = Catalogue()
         self._delivery_type = 'FIRST CLASS'
+        self._storefront = None
+        super().__init__()
 
     @property
     def catalogue(self):
@@ -96,24 +88,18 @@ class Seller:
         else:
             self._name = new_delivery_type
 
-            
-class External(Seller):
-    def __init__(self):
-        self._storefront = StoreFront()
-        super().__init__()
-
     @property
     def storefront(self):
         return self._storefront
 
     @storefront.setter
     def storefront(self, new_storefront):
-        if isinstance(new_storefront, StoreFront) == False:
-            raise TypeError('The storefront must be an instance of the StoreFront class')
+        if re.fullmatch(STOREFRONT_REGEX, new_storefront) == None:
+            raise TypeError('The storefront must be a png/jpeg file')
         else:
             self._storefront = new_storefront
 
-            
+
 class User(Customer, External):
     def __init__(self, idIn = None, usernameIn = None, passwordIn = None, nameIn = None):
         self._id = idIn
@@ -133,7 +119,7 @@ class User(Customer, External):
     @id.setter
     def id(self, new_id):
         self._id = new_id
-        
+
     @property
     def name(self):
         return self._name
@@ -188,31 +174,7 @@ class User(Customer, External):
     def phone(self, new_phone):
         self._phone = new_phone
 
-    @property
-    def type(self):
-        return self._type
 
-    @type.setter
-    def type(self, new_type):
-        if new_type.upper() not in USER_TYPES:
-            raise ValueError('Not a valid user type')
-        else:
-            self._type = new_type
-
-            
-class StoreFront:
-    def __init__(self):
-        self._logo = None
-
-    @property
-    def logo(self):
-        return self._logo
-
-    @logo.setter
-    def logo(self, new_logo):
-        self._logo = new_logo
-
-        
 class Product:
     def __init__(self, attributes):
         self.id = attributes[0]
@@ -227,7 +189,7 @@ class Product:
     @id.setter
     def id(self, new_id):
         self._id = new_id
-    
+
     @property
     def name(self):
         return self._name
@@ -243,7 +205,7 @@ class Product:
     @price.setter
     def price(self, new_price):
         self._price = new_price
-        
+
     @property
     def stock_count(self):
         return self._stock_count
@@ -254,11 +216,11 @@ class Product:
 
     def is_available(self):
         return self.stock_count > 0
-      
+
     def __str__(self):
         return f'{self.name}'
 
-      
+
 class Warehouse:
     def __init__(self):
         self._products = {}
@@ -322,26 +284,25 @@ class Basket:
             self._products.remove(product)
         except ValueError:
             raise ValueError('The basket does not contain this product')
-            
+
     def empty_basket(self):
         self._products = []
-        
-    def calculate_total(self):
-        return sum(product.price for product in self.products)
-      
-    def checkout(self):
-        return Transaction(date.today(), self)
-      
-    def __str__(self):
-        return f'Basket contains {[str(product) for product in self.products]}'
 
-      
+    def calculate_total(self):
+        return round(sum(product.price for product in self.products),2)
+
+    def create_transaction(self, payment_method):
+        return Transaction(date.today(), self, payment_method)
+
+    def __str__(self):
+        return f"Basket contains {[str(product) for product in self.products]}"
+
+
 class Transaction:
-    def __init__(self, date_in, basket_in):
-        self._date = date_in
-        self._basket = basket_in
-        self._promotional_code = None
-        self._payment_method = None
+    def __init__(self, dateIn, basketIn, payment_methodIn):
+        self._date = dateIn
+        self._basket = basketIn
+        self._payment_details = payment_methodIn
 
     @property
     def date(self):
@@ -357,15 +318,10 @@ class Transaction:
 
     @basket.setter
     def basket(self, new_basket):
-        self._basket = new_basket
-
-    @property
-    def promotional_code(self):
-        return self._promotional_code
-
-    @promotional_code.setter
-    def promotional_code(self, new_promotional_code):
-        self._promotional_code = new_promotional_code
+        if isinstance(new_basket, Basket) == False:
+            raise TypeError('Invalid basket in transaction')
+        else:
+            self._basket = new_basket
 
     @property
     def payment_method(self):
@@ -373,12 +329,12 @@ class Transaction:
 
     @payment_method.setter
     def payment_method(self, new_payment_method):
-        self._payment_method = new_payment_method
+        if isinstance(new_payment_method, PaymentMethod) == False:
+            raise TypeError('Invalid payment method in transaction')
+        else:
+            self._payment_method = new_payment_method
 
-    def is_promotional_code_valid(self):
-        return True
 
-      
 class Order:
     def __init__(self, new_transaction):
         self._transaction = new_transaction
@@ -425,7 +381,7 @@ class Order:
     def notify_customer(self):
         return True
 
-      
+
 class PaymentDetails:
     def __init__(self):
         self._card = None
@@ -459,14 +415,16 @@ class PaymentDetails:
         else:
             self._default = new_default
 
-            
+
 class Card:
     def __init__(self, card_numberIn, sort_codeIn, card_typeIn, expiry_dateIn, cvv_numberIn):
+        self.validate_card_details(card_numberIn, sort_codeIn, card_typeIn, expiry_dateIn, cvv_numberIn)
         self._card_number = card_numberIn
         self._sort_code = sort_codeIn
         self._card_type = card_typeIn
         self._expiry_date = expiry_dateIn
         self._cvv_number = cvv_numberIn
+        super().__init__()
 
     @property
     def card_number(self):
@@ -474,29 +432,44 @@ class Card:
 
     @card_number.setter
     def card_number(self, new_card_number):
-        if re.fullmatch(CARD_REGEX, new_card_number) == None:
+        if self.is_valid_card_number(new_card_number):
+            self._card_number = new_card_number
+
+    def is_valid_card_number(self, card_number):
+        if re.fullmatch(CARD_REGEX, card_number) == None:
             raise ValueError('Card number must be 16 digits long')
         else:
-            self._card_number = new_card_number
+            return True
 
     @property
     def sort_code(self):
         return self._sort_code
 
     @sort_code.setter
-    def card_type(self, new_sort_code):
-        self._sort_code = new_sort_code
-            
+    def sort_code(self, new_sort_code):
+        if self.is_valid_sort_code(new_sort_code):
+            self._sort_code = new_sort_code
+
+    def is_valid_sort_code(self, sort_code):
+        if re.fullmatch(SORT_CODE_REGEX, sort_code) == None:
+            raise ValueError('Sort code must contain 6 digits')
+        else:
+            return True
+
     @property
     def card_type(self):
         return self._card_type
 
     @card_type.setter
     def card_type(self, new_card_type):
-        if new_card_type.upper() not in CARD_TYPES:
-            raise ValueError('Card type is invalid')
-        else:
+        if self.is_valid_card_type(new_card_type):
             self._card_type = new_card_type
+
+    def is_valid_card_type(self, card_type):
+        if card_type.upper() not in CARD_TYPES:
+            raise ValueError('Invalid card type')
+        else:
+          return True
 
     @property
     def expiry_date(self):
@@ -504,10 +477,17 @@ class Card:
 
     @expiry_date.setter
     def expiry_date(self, new_expiry_date):
-        if new_expiry_date < date.today():
-            raise ValueError('This card is expired')
-        else:
+        if self.is_valid_expiry_date(new_expiry_date):
             self._expiry_date = new_expiry_date
+
+    def is_valid_expiry_date(self, dateIn):
+        try:
+            if datetime.strptime(str(dateIn), DATE_FORMAT) < datetime.now():
+                raise ExpiryError('This card is expired')
+        except ValueError:
+            raise ValueError('Invalid date format')
+        else:
+            return True
 
     @property
     def cvv_number(self):
@@ -515,27 +495,48 @@ class Card:
 
     @cvv_number.setter
     def cvv_number(self, new_cvv_number):
-        if re.fullmatch(CVV_REGEX, new_cvv_number) == None:
-            raise ValueError('The CVV number must contain three digits')
-        else:
+        if self.is_valid_cvv(new_cvv_number):
             self._cvv_number = new_cvv_number
 
-    def is_valid(self, card):
-        return card.card_number == self.card_number and card.card_type == self.card_type and card.expiry_date == self.expiry_date and card.cvv_number == self.cvv_number
+    def is_valid_cvv(self, cvv):
+        if re.fullmatch(CVV_REGEX, cvv) == None:
+            raise ValueError('CVV must contain 3 digits')
+        else:
+            return True
 
-      
-class OnlinePaymentService:
-    def __init__(self):
-        self._service_name = None
-        self._service_number = None
+    def validate_card_details(self, card_numberIn, sort_codeIn, card_typeIn, expiry_dateIn, cvv_numberIn):
+        self.is_valid_card_number(card_numberIn)
+        self.is_valid_sort_code(sort_codeIn)
+        self.is_valid_card_type(card_typeIn)
+        self.is_valid_expiry_date(expiry_dateIn)
+        self.is_valid_cvv(cvv_numberIn)
+        return
+
+    def __str__(self):
+        return f"{self.card_type} {self.card_number}"
+
+class OnlinePayment:
+    def __init__(self, service_nameIn, service_numberIn, balanceIn = 0.0):
+        self.validate_service_details(service_nameIn, service_numberIn, balanceIn)
+        self._service_name = service_nameIn
+        self._service_number = service_numberIn
+        self._balance = balanceIn
+        super().__init__()
 
     @property
     def service_name(self):
         return self._service_name
 
     @service_name.setter
-    def service_name(self, new_service_name):
-        self._service_name = new_service_name
+    def name(self, new_service_name):
+      if self.is_valid_service_name(new_service_name):
+          self._service_name = new_service_name
+
+    def is_valid_service_name(self, name):
+        if type(name) != str or len(name) == 0:
+            raise ValueError('Invalid service name')
+        else:
+            return True
 
     @property
     def service_number(self):
@@ -543,17 +544,56 @@ class OnlinePaymentService:
 
     @service_number.setter
     def service_number(self, new_service_number):
-        self._service_number = new_service_number
+        if self.is_valid_service_number(new_service_number):
+            self._service_number = new_service_number
 
-    def is_valid(self, service):
-        return service.service_name == self.service_name and service.service_number == self.service_number
+    def is_valid_service_number(self, service_number):
+        if re.fullmatch(ONLINE_SERVICE_NUMBER_REGEX, service_number) == None:
+            raise ValueError('Online service number must be 4 digits long')
+        else:
+            return True
+
+    @property
+    def balance(self):
+        return self._balance
+
+    @balance.setter
+    def balance(self, new_balance):
+        if self.is_valid_balance(new_balance):
+            self._balance = new_balance
+
+    def is_valid_balance(self, balance):
+        if type(balance) != float:
+            raise ValueError('Invalid balance')
+        elif balance < 0:
+            raise ValueError('Balance cannot be less than zero')
+        else:
+            return True
+
+    def validate_service_details(self, service_nameIn, service_numberIn, balanceIn):
+        self.is_valid_service_name(service_nameIn)
+        self.is_valid_service_number(service_numberIn)
+        self.is_valid_balance(balanceIn)
+        return
+
+    def process_payment(self, debit_amount):
+        if debit_amount > self.balance:
+            raise PaymentError('Not enough credit in your account')
+        else:
+            self.balance -= debit_amount
+            return self.balance
+
+    def __str__(self):
+        return f"{self.service_name} {self.service_number}"
 
 
-class GiftVoucher:
-    def __init__(self):
-        self._voucher_id = None
-        self._expiry_date = None
-        self._amount = None
+class Voucher:
+    def __init__(self, voucher_idIn, expiry_dateIn = "2022-01-01", balanceIn = 0):
+        self._voucher_id = voucher_idIn
+        if self.is_valid_expiry_date(expiry_dateIn):
+            self._expiry_date = expiry_dateIn
+        self._balance = balanceIn
+        super().__init__()
 
     @property
     def voucher_id(self):
@@ -569,42 +609,36 @@ class GiftVoucher:
 
     @expiry_date.setter
     def expiry_date(self, new_expiry_date):
-        if new_expiry_date < date.today():
-            raise ValueError('This gift voucher has expired')
-        else:
+        if self.is_valid_expiry_date(new_expiry_date):
             self._expiry_date = new_expiry_date
 
-    @property
-    def amount(self):
-        return self._amount
-
-    @amount.setter
-    def amount(self, new_amount):
-        self._amount = new_amount
-
-    def is_valid(self, voucher):
-        return voucher.voucher_id == self.voucher_id and voucher.expiry_date == self.expiry_date
-
-      
-class PaymentError(Exception):
-    pass
-
-  
-class PaymentMethod(Card, OnlinePaymentService, GiftVoucher):
-    def __init__(self):
-        self._amount = None
+    def is_valid_expiry_date(self, dateIn):
+        try:
+            if datetime.strptime(str(dateIn), DATE_FORMAT) < datetime.now():
+                raise ExpiryError('This voucher is expired')
+        except ValueError:
+            raise ValueError('Invalid date format')
+        else:
+            return True
 
     @property
-    def amount(self):
-        return self._amount
+    def balance(self):
+        return self._balance
 
-    @amount.setter
-    def amount(self, new_amount):
-        self._amount = new_amount
+    @balance.setter
+    def balance(self, new_balance):
+        self._balance = new_balance
 
     def process_payment(self, payment):
-        if self.amount >= payment:
-            self.amount -= payment
-            return True
+        if self.balance < payment:
+            raise PaymentError('The voucher cannot cover the cost of this transaction')
         else:
-            raise PaymentError('Your payment method cannot cover the cost of this transaction')
+            return True
+
+    def __str__(self):
+        return f"Voucher number {self.voucher_id}"
+
+class PaymentMethod(Card, OnlinePayment, Voucher):
+    def __init__(self):
+        super().__init__()
+
