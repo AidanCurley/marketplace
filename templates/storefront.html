@@ -1,0 +1,37 @@
+<html>
+  {% extends "sellerlayout.html" %}
+
+  {% block title %}
+      Edit Storefront
+  {% endblock %}
+
+  {% block content %}
+  {% if session.user_id %}
+    <h1>Change Storefront Image</h1>
+    <form method="post" action="/storefront">
+      <table class="table">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Storefront</th>
+          </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><div class="form-group">
+                  <label>ID</label>
+                  <input id='id' class="form-control" name="id" type="text" value=1 readonly>
+                </div></td>
+                <td><div class="form-group">
+                  <label>Storefront Image</label>
+                  <input id='storefront' class="form-control" name="storefront" type="text" value={{ storefront }}>
+                </div></td>
+            </tr>
+        </tbody>
+      </table>
+      <button class="btn" type='submit_btn' name='submit' value='cancel'>Cancel</button>
+      <button class="btn btn-primary" type='submit_btn' name='submit' value='save'>Save Changes</button>
+    </form>
+  {% endif %}
+  {% endblock %}
+</html>

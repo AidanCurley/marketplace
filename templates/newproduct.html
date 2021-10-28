@@ -1,0 +1,42 @@
+<html>
+  {% extends "sellerlayout.html" %}
+
+  {% block title %}
+      Add New Product
+  {% endblock %}
+
+  {% block content %}
+  {% if session.user_id %}
+    <h1>{{title}}</h1>
+    <form method="post" action="/newproduct">
+      <table class="table">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col">Product</th>
+            <th scope="col">Stock_Count</th>
+            <th scope="col">Price</th>
+          </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><div class="form-group">
+                  <label>Product Name</label>
+                  <input id='name' class="form-control" name="name" type="text">
+                </div></td>
+                <td><div class="form-group">
+                  <label>Stock Count</label>
+                  <input id='stock_count' class="form-control" name="stock_count" type="text">
+                </div></td>
+                <td><div class="form-group">
+                  <label>Price</label>
+                  <input id='price' class="form-control" name="price" type="text">
+                </div></td>
+            </tr>
+        </tbody>
+      </table>
+      <button class="btn" type='submit_btn' name='submit' value='cancel'>Cancel</button>
+      <button class="btn btn-primary" type='submit_btn' name='submit' value='save'>Save Changes</button>
+    </form>
+  {% endif %}
+  {% endblock %}
+</html>

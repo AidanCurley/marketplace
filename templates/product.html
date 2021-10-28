@@ -1,0 +1,42 @@
+<html>
+  {% extends "sellerlayout.html" %}
+
+  {% block title %}
+      Edit {{ product.name }}
+  {% endblock %}
+
+  {% block content %}
+  {% if session.user_id %}
+    <h1>{{title}}</h1>
+    <form method="post" action="/product">
+      <table class="table">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Product</th>
+            <th scope="col">Price (£)</th>
+          </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><div class="form-group">
+                  <label>ID</label>
+                  <input id='id' class="form-control" name="id" type="text" value={{ product.id }} {{readonly}}>
+                </div></td>
+                <td><div class="form-group">
+                  <label>Product Name</label>
+                  <input id='name' class="form-control" name="name" type="text" value={{ product.name }} {{readonly}}>
+                </div></td>
+                <td><div class="form-group">
+                  <label>Price (£)</label>
+                  <input id='price' class="form-control" name="price" type="text" value={{ product.price }}>
+                </div></td>
+            </tr>
+        </tbody>
+      </table>
+      <button class="btn" type='submit_btn' name='submit' value='cancel'>Cancel</button>
+      <button class="btn btn-primary" type='submit_btn' name='submit' value='save'>Save Changes</button>
+    </form>
+  {% endif %}
+  {% endblock %}
+</html>

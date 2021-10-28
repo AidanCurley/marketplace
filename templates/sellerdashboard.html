@@ -1,20 +1,20 @@
 <html>
-  {% extends "layout.html" %}
+  {% extends "sellerlayout.html" %}
 
   {% block title %}
-      Products
+      Seller's Dashboard
   {% endblock %}
 
   {% block content %}
   {% if session.user_id %}
-    <h1>Buy Stuff</h1>
-    <form method="post" action="/">
+    <h1>My Catalogue</h1>
+    <form method="post" action="/sellerdashboard">
       <table class="table">
         <thead class="thead-light">
           <tr>
             <th scope="col">Product</th>
-            <th scope="col">Price</th>
-            <th scope="col"></th>
+            <th scope="col">Price (£)</th>
+            <th scope="col"> </th>
           </tr>
         </thead>
         <tbody>
@@ -22,12 +22,11 @@
             <tr>
               <td>{{ product.name }}</td>
               <td>£{{ product.price }}</td>
-              <td><button class="btn" type='submit_btn' name='submit' value={{ product.id }}>Buy it </button></td>
+              <td><button class="btn" type='submit_btn' name='submit' value={{ product.id }}>Change Price</button></td>
             </tr>
           {% endfor %}
         </tbody>
       </table>
-      <button class="btn btn-primary" type='submit_btn' name='submit' value='checkout'>Checkout</button>
     </form>
   {% endif %}
   {% endblock %}

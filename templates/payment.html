@@ -5,21 +5,61 @@
 {% endblock %}
 
 {% block content %}
-    <form action="/payment" method="post">
-        <p>TOTAL: {{ total }}</p>
-        <div class="form-group">
-            <label>Card Number</label>
-            <input id='card_number' class="form-control" name="card_number" type="text" placeholder={{ card.card_number }}>
+    <form method="post" action="/payment">
+        <div><h1>TOTAL: £{{ total }}</h1></div>
+        <div class="m-4">
+          <label class="radio-inline pl-2 mr-2">
+            <input type="radio" name="options" value="card" checked> Credit/Debit Card
+          </label>
+          <label class="radio-inline pl-2 mr-2">
+            <input type="radio" name="options" value="online"> Online Payment
+          </label>
+          <label class="radio-inline pl-2">
+            <input type="radio" name="options" value="voucher"> Giftcard/Voucher
+          </label>
         </div>
-        <div class="form-group">
-            <label>Sort Code</label>
-            <input id='sort_code' class="form-control" name="sort_code" type="text" placeholder={{ card.sort_code }}>
+        <div><h2>CARD DETAILS</h2></div>
+        <div id="card" class="details mt-4">
+            <div class="form-group">
+                <label>Card Number</label>
+                <input id='card_number' class="form-control" name="card_number" type="text" value={{ card.card_number }}>
+            </div>
+            <div class="form-group">
+                <label>Sort Code</label>
+                <input id='sort_code' class="form-control" name="sort_code" type="text" value={{ card.sort_code }}>
+            </div>
+            <div class="form-group">
+                <label>Type</label>
+                <input id='card_type' class="form-control" name="card_type" value={{ card.card_type }}>
+            </div>
+            <div class="form-group">
+                <label>Expiry Date</label>
+                <input id='expiry_date' class="form-control" name="expiry_date" value={{ card.expiry_date }}>
+            </div>
+            <div class="form-group">
+                <label>CVV</label>
+                <input id='cvv' class="form-control" name="cvv" type="password">
+            </div>
         </div>
-        <div class="form-group">
-            <label>CVV</label>
-            <input id='cvv' class="form-control" name="cvv" type="password">
+        <div><h2>ONLINE PAYMENT DETAILS</h2></div>
+        <div id="paypal" class="details mt-4">
+            <div class="form-group">
+                <label>Payment Service Name</label>
+                <input id='service_name' class="form-control" name="service_name" type="text" value={{ online_payment.service_name }}>
+            </div>
+            <div class="form-group">
+                <label>Account Number</label>
+                <input id='service_number' class="form-control" name="service_number" type="text" value={{ online_payment.service_number }}>
+            </div>
         </div>
+        <div><h2>VOUCHER DETAILS</h2></div>
+        <div id="voucher" class="details mt-4">
+            <div class="form-group">
+                <label>Giftcard/Voucher Number</label>
+                <input id='voucher_id' class="form-control" name="voucher_id" type="text" placeholder='Enter Voucher Number'>
+            </div>
+        </div>
+        <button class="btn" type="submit" name='submit' value="cancel">Cancel</button>
         <button class="btn btn-primary" type="submit" name='submit' value="pay">Pay Now</button>
-        <button id='cancel' class="btn" type="submit" name='submit' value="cancel">Cancel</button>
     </form>
 {% endblock %}

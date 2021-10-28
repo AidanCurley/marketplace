@@ -1,22 +1,18 @@
 <html>
   {% extends "layout.html" %}
-  
+
   {% block title %}
-    {%  if title %}
-      <title>{{ title }}</title>
-    {% else %}
-      <title>Welcome to the Page</title>
-    {%  endif %}
+    Checkout
   {% endblock %}
-  
+
   {% block content %}
     <h1>My Basket</h1>
       <table class="table">
         <thead class="thead-light">
           <tr>
             <th scope="col">Product</th>
+            <th scope="col"></th>
             <th scope="col">Price</th>
-            <th scope="col">Stock</th>
           </tr>
         </thead>
         <tbody>
@@ -24,20 +20,23 @@
             <tr>
               <td>{{product.name}}</td>
               <td></td>
-              <td>{{product.price}}</td>
+              <td>£{{product.price}}</td>
             </tr>
           {% endfor %}
           <tr>
+            <strong>
               <td>TOTAL</td>
               <td></td>
-              <td>{{ total }}</td>
+              <td>£{{ total }}</td>
+            </strong>
           </tr>
         </tbody>
 
       </table>
       <form method ="post" action="/checkout">
+        <button class="btn" type='submit_btn' name='submit' value='empty'>Empty Basket</button>
         <button class="btn" type='submit_btn' name='submit' value='shop'>Buy more</button>
-        <button class="btn btn-primary" type='submit_btn' name='submit' value='pay'>Pay now</button>
+        <button class="btn btn-primary" type='submit_btn' name='submit' value='checkout'>Pay now</button>
       </form>
   {% endblock %}
 </html>
